@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="Demonstração educativa de criptografia e descriptografia AES-GCM.">
+
+  <title>CriptoLab | Criptografia na prática</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+    <a class="brand" href="#">
+      <span class="brand-icon">⌘</span>
+      Cripto<span>Lab</span>
+    </a>
+
+    <span class="top-label">
+      <i></i> LABORATÓRIO INTERATIVO
+    </span>
+  </header>
+
+  <main class="container">
+
+    <!-- APRESENTAÇÃO -->
+    <section class="hero">
+
+      <div class="eyebrow">
+        SEGURANÇA DIGITAL • APRENDIZADO PRÁTICO
+      </div>
+
+      <h1>
+        Entenda a <span>criptografia</span><br>
+        fazendo acontecer.
+      </h1>
+
+      <p>
+        Digite uma mensagem, defina uma chave e acompanhe
+        como os dados são protegidos — e depois recuperados.
+      </p>
+
+      <div class="hero-tags">
+        <span>AES-GCM</span>
+        <span>PBKDF2</span>
+        <span>UTF-8</span>
+      </div>
+
+    </section>
+
+
+    <!-- CRIPTOGRAFIA -->
+    <section class="panel">
+
+      <div class="panel-heading">
+
+        <div>
+          <div class="section-kicker">01 / ENTRADA</div>
+          <h2>Criptografar uma mensagem</h2>
+        </div>
+
+        <span class="status">
+          ● PRONTO PARA USAR
+        </span>
+
+      </div>
+
+      <label for="message">
+        Mensagem ou código
+      </label>
+
+      <textarea
+        id="message"
+        rows="4"
+        placeholder="Digite letras, números, símbolos ou uma frase..."
+      ></textarea>
+
+      <div class="field-row">
+
+        <div class="field-grow">
+
+          <label for="password">
+            Chave secreta (senha)
+          </label>
+
+          <div class="password-wrap">
+
+            <input
+              id="password"
+              type="password"
+              placeholder="Crie uma chave para proteger a mensagem"
+            >
+
+            <button
+              class="eye"
+              type="button"
+              data-target="password"
+              aria-label="Mostrar chave"
+            >
+              ◉
+            </button>
+
+          </div>
+
+        </div>
+
+        <button
+          id="encryptBtn"
+          class="primary-btn"
+          type="button"
+        >
+          <span>↗</span> Criptografar
+        </button>
+
+      </div>
+
+      <p class="hint">
+        Use uma chave que você consiga informar novamente
+        para descriptografar.
+      </p>
+
+      <div
+        id="encryptError"
+        class="error"
+        role="alert"
+      ></div>
+
+    </section>
+
+
+    <!-- RESULTADO CRIPTOGRAFADO -->
+    <section class="panel result-panel">
+
+      <div class="panel-heading">
+
+        <div>
+          <div class="section-kicker">02 / RESULTADO</div>
+          <h2>Texto criptografado</h2>
+        </div>
+
+        <span class="lock">
+          ▣ DADOS PROTEGIDOS
+        </span>
+
+      </div>
+
+      <label for="ciphertext">
+        Pacote criptografado (JSON)
+      </label>
+
+      <textarea
+        id="ciphertext"
+        rows="5"
+        placeholder="O resultado aparecerá aqui. Você também pode colar um pacote recebido..."
+        spellcheck="false"
+      ></textarea>
+
+      <div class="actions">
+
+        <button
+          id="copyBtn"
+          class="secondary-btn"
+          type="button"
+        >
+          Copiar pacote
+        </button>
+
+        <button
+          id="decryptBtn"
+          class="primary-btn"
+          type="button"
+        >
+          Descriptografar ↙
+        </button>
+
+      </div>
+
+      <div
+        id="decryptError"
+        class="error"
+        role="alert"
+      ></div>
+
+      <div
+        id="plainResult"
+        class="plain-result hidden"
+      >
+
+        <div class="result-title">
+          <span>✓</span> Mensagem recuperada
+        </div>
+
+        <pre id="plainText"></pre>
+
+      </div>
+
+    </section>
+
+
+    <!-- EXPLICAÇÃO DO PROCESSO -->
+    <section class="panel process-panel">
+
+      <div class="panel-heading">
+
+        <div>
+          <div class="section-kicker">
+            03 / POR DENTRO DO PROCESSO
+          </div>
+
+          <h2>O que aconteceu?</h2>
+        </div>
+
+        <span class="live-tag">
+          VISUALIZAÇÃO
+        </span>
+
+      </div>
+
+      <p class="process-intro">
+        Acompanhe as etapas executadas no navegador.
+        Os detalhes são atualizados a cada operação.
+      </p>
+
+
+      <!-- ETAPAS -->
+      <div id="steps" class="steps">
+
+        <article class="step">
+
+          <div class="step-number">1</div>
+
+          <div>
+            <h3>Texto original</h3>
+
+            <p>
+              A mensagem digitada é a informação que queremos proteger.
+            </p>
+
+            <code>
+              Aguardando mensagem...
+            </code>
+          </div>
+
+        </article>
+
+
+        <article class="step">
+
+          <div class="step-number">2</div>
+
+          <div>
+            <h3>Conversão para bytes</h3>
+
+            <p>
+              O texto é convertido para bytes usando UTF-8,
+              que representa letras, números e símbolos.
+            </p>
+
+            <code>
+              Aguardando conversão...
+            </code>
+          </div>
+
+        </article>
+
+
+        <article class="step">
+
+          <div class="step-number">3</div>
+
+          <div>
+            <h3>Derivação da chave</h3>
+
+            <p>
+              PBKDF2 combina sua senha com um salt aleatório
+              e gera uma chave AES de 256 bits.
+            </p>
+
+            <code>
+              Aguardando derivação...
+            </code>
+          </div>
+
+        </article>
+
+
+        <article class="step">
+
+          <div class="step-number">4</div>
+
+          <div>
+            <h3>Criptografia AES-GCM</h3>
+
+            <p>
+              Um IV aleatório é usado para cifrar os bytes.
+              O GCM também verifica se os dados foram alterados.
+            </p>
+
+            <code>
+              Aguardando criptografia...
+            </code>
+          </div>
+
+        </article>
+
+
+        <article class="step">
+
+          <div class="step-number">5</div>
+
+          <div>
+            <h3>Resultado em Base64</h3>
+
+            <p>
+              Os bytes criptografados são codificados em
+              Base64 para facilitar o armazenamento e o compartilhamento.
+            </p>
+
+            <code>
+              Aguardando resultado...
+            </code>
+          </div>
+
+        </article>
+
+      </div>
+
+
+      <!-- EXPLICAÇÃO DOS ELEMENTOS -->
+      <div class="explain-grid">
+
+        <div>
+
+          <strong>Salt</strong>
+
+          <p>
+            Valor aleatório usado na derivação da chave.
+            Não é a senha.
+          </p>
+
+        </div>
+
+        <div>
+
+          <strong>IV / nonce</strong>
+
+          <p>
+            Valor único e aleatório usado pelo AES-GCM
+            em cada criptografia.
+          </p>
+
+        </div>
+
+        <div>
+
+          <strong>Tag de autenticação</strong>
+
+          <p>
+            Permite detectar alterações no conteúdo
+            ou uma chave incorreta.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- DESCRIPTOGRAFIA -->
+      <div class="reverse-note">
+
+        <b>Na descriptografia:</b>
+
+        O navegador lê o pacote, deriva novamente a mesma
+        chave com a senha e o salt, valida o conteúdo e
+        reverte a operação para recuperar o texto original.
+
+      </div>
+
+    </section>
+
+
+    <!-- RODAPÉ -->
+    <footer>
+
+      CRIPTOLAB
+      <span>•</span>
+      Demonstração educativa.
+      A criptografia acontece localmente no seu navegador.
+
+    </footer>
+
+  </main>
+
+
+  <!-- CONEXÃO COM JAVASCRIPT -->
+  <script src="script.js"></script>
+
+</body>
+</html>
